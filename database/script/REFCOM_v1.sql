@@ -1,0 +1,234 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema REFCOM
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `REFCOM` ;
+
+-- -----------------------------------------------------
+-- Schema REFCOM
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `REFCOM` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+USE `REFCOM` ;
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`CLIENTE`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`CLIENTE` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NOMBRE` VARCHAR(45) NULL,
+  `DIRECCION` VARCHAR(45) NULL,
+  `TELEFONO` VARCHAR(45) NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`TIENDA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`TIENDA` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NOMBRE` VARCHAR(45) NULL,
+  `DIRECCION` VARCHAR(45) NULL,
+  `TELEFONO` VARCHAR(45) NULL,
+  `DESCRIPCION` VARCHAR(45) NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`ROL`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`ROL` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `ROL` VARCHAR(45) NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`USUARIO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`USUARIO` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `USUARIO` VARCHAR(45) NULL,
+  `PASSWORD` VARCHAR(45) NULL,
+  `ROL_ID` INT NOT NULL,
+  PRIMARY KEY (`ID`, `ROL_ID`),
+  INDEX `fk_USUARIO_ROL1_idx` (`ROL_ID` ASC),
+  CONSTRAINT `fk_USUARIO_ROL1`
+    FOREIGN KEY (`ROL_ID`)
+    REFERENCES `REFCOM`.`ROL` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`EMPLEADO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`EMPLEADO` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NOMBRE` VARCHAR(45) NULL,
+  `APELLIDO` VARCHAR(45) NULL,
+  `DIRECCION` VARCHAR(45) NULL,
+  `TELEFONO` VARCHAR(45) NULL,
+  `TIENDA_ID` INT NOT NULL,
+  `USUARIO_ID` INT NOT NULL,
+  PRIMARY KEY (`ID`, `TIENDA_ID`, `USUARIO_ID`),
+  INDEX `fk_EMPLEADO_TIENDA1_idx` (`TIENDA_ID` ASC),
+  INDEX `fk_EMPLEADO_USUARIO1_idx` (`USUARIO_ID` ASC),
+  CONSTRAINT `fk_EMPLEADO_TIENDA1`
+    FOREIGN KEY (`TIENDA_ID`)
+    REFERENCES `REFCOM`.`TIENDA` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_EMPLEADO_USUARIO1`
+    FOREIGN KEY (`USUARIO_ID`)
+    REFERENCES `REFCOM`.`USUARIO` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`BODEGA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`BODEGA` (
+  `ID` INT NOT NULL,
+  `NOMBRE` VARCHAR(45) NULL,
+  `DIRECCION` VARCHAR(45) NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`TIPO_PRODUCTO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`TIPO_PRODUCTO` (
+  `ID` INT NOT NULL,
+  `TIPO` VARCHAR(45) NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`PRODUCTO`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`PRODUCTO` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NOMBRE` VARCHAR(45) NULL,
+  `FECHA_VENCIMIENTO` VARCHAR(45) NULL,
+  `DESCRIPCION` VARCHAR(45) NULL,
+  `BORRADO` VARCHAR(45) NULL,
+  `BODEGA_ID` INT NOT NULL,
+  `TIPO_PRODUCTO_ID` INT NOT NULL,
+  PRIMARY KEY (`ID`, `BODEGA_ID`, `TIPO_PRODUCTO_ID`),
+  INDEX `fk_PRODUCTO_BODEGA1_idx` (`BODEGA_ID` ASC),
+  INDEX `fk_PRODUCTO_TIPO_PRODUCTO1_idx` (`TIPO_PRODUCTO_ID` ASC),
+  CONSTRAINT `fk_PRODUCTO_BODEGA1`
+    FOREIGN KEY (`BODEGA_ID`)
+    REFERENCES `REFCOM`.`BODEGA` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_PRODUCTO_TIPO_PRODUCTO1`
+    FOREIGN KEY (`TIPO_PRODUCTO_ID`)
+    REFERENCES `REFCOM`.`TIPO_PRODUCTO` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`DETALLE_FACT`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`DETALLE_FACT` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `CANTIDAD` VARCHAR(45) NULL,
+  `PRECIO` VARCHAR(45) NULL,
+  `PRODUCTO_ID` INT NOT NULL,
+  PRIMARY KEY (`ID`, `PRODUCTO_ID`),
+  INDEX `fk_DETALLE_FACT_PRODUCTO1_idx` (`PRODUCTO_ID` ASC),
+  CONSTRAINT `fk_DETALLE_FACT_PRODUCTO1`
+    FOREIGN KEY (`PRODUCTO_ID`)
+    REFERENCES `REFCOM`.`PRODUCTO` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`FACTURA`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`FACTURA` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NO_FACT` VARCHAR(45) NULL,
+  `FECHA` VARCHAR(45) NULL,
+  `HORA` VARCHAR(45) NULL,
+  `EMPLEADO_ID` INT NOT NULL,
+  `CLIENTE_ID` INT NOT NULL,
+  `DETALLE_FACT_ID` INT NOT NULL,
+  PRIMARY KEY (`ID`, `EMPLEADO_ID`, `CLIENTE_ID`, `DETALLE_FACT_ID`),
+  INDEX `fk_FACTURA_EMPLEADO1_idx` (`EMPLEADO_ID` ASC),
+  INDEX `fk_FACTURA_CLIENTE1_idx` (`CLIENTE_ID` ASC),
+  INDEX `fk_FACTURA_DETALLE_FACT1_idx` (`DETALLE_FACT_ID` ASC),
+  CONSTRAINT `fk_FACTURA_EMPLEADO1`
+    FOREIGN KEY (`EMPLEADO_ID`)
+    REFERENCES `REFCOM`.`EMPLEADO` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_FACTURA_CLIENTE1`
+    FOREIGN KEY (`CLIENTE_ID`)
+    REFERENCES `REFCOM`.`CLIENTE` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_FACTURA_DETALLE_FACT1`
+    FOREIGN KEY (`DETALLE_FACT_ID`)
+    REFERENCES `REFCOM`.`DETALLE_FACT` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`PROVEEDOR`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`PROVEEDOR` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NOMBRE` VARCHAR(45) NULL,
+  `DIRECCION` VARCHAR(45) NULL,
+  `TELEFONO` VARCHAR(45) NULL,
+  `MAIL` VARCHAR(45) NULL,
+  PRIMARY KEY (`ID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `REFCOM`.`PRODUCTO_PROVEEDOR`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `REFCOM`.`PRODUCTO_PROVEEDOR` (
+  `PRODUCTO_ID` INT NOT NULL,
+  `PROVEEDOR_ID` INT NOT NULL,
+  PRIMARY KEY (`PRODUCTO_ID`, `PROVEEDOR_ID`),
+  INDEX `fk_PRODUCTO_has_PROVEEDOR_PROVEEDOR1_idx` (`PROVEEDOR_ID` ASC),
+  INDEX `fk_PRODUCTO_has_PROVEEDOR_PRODUCTO_idx` (`PRODUCTO_ID` ASC),
+  CONSTRAINT `fk_PRODUCTO_has_PROVEEDOR_PRODUCTO`
+    FOREIGN KEY (`PRODUCTO_ID`)
+    REFERENCES `REFCOM`.`PRODUCTO` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_PRODUCTO_has_PROVEEDOR_PROVEEDOR1`
+    FOREIGN KEY (`PROVEEDOR_ID`)
+    REFERENCES `REFCOM`.`PROVEEDOR` (`ID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
