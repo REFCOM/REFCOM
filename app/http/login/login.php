@@ -4,16 +4,26 @@
 echo '
 	<html>
 		<head>
+<<<<<<< HEAD
 			<meta charset = "utf-8">
     		<meta http-equiv = "X-UA-Compatible" content = "IE = edge">
     		<meta name = "viewport" content = "width = device-width, initial-scale = 1">
 
     		<!-- CSS de Bootstrap -->
     		<link href = "../../../bootstrap/dist/css/bootstrap.min.css" rel = "stylesheet" media = "screen">
+=======
+			<meta charset="utf-8">
+    		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+    		<!-- CSS de Bootstrap -->
+    		<link href="../../../bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+>>>>>>> master
  
 			<title>Login</title>
 		</head>
 		<body>
+<<<<<<< HEAD
 			<div class="container">
         <div class="row">
             <div class="col-md-4 col-md-offset-4">
@@ -48,3 +58,24 @@ echo '
 ';
  ?>
 
+=======
+			<h1> Iniciar Sesion </h1>
+			<form class="form-inline" role="form" method= "POST">
+				<div class="form_group">
+					<td > Usuario </td>
+					<br>
+					<input type="text" name="usuario" class="form-control" placeholder="Usuario"> 
+					<br>
+					<td>Contraseña </td>
+					<br>
+					<input type="text" name="password" class="form-control" placeholder="Contraseña">
+					<br>
+					<input type="submit" value="Iniciar Sesion" class="btn btn-default">
+				</div>
+			</form>
+		</body>
+	</html>
+
+';
+ ?>
+>>>>>>> master
