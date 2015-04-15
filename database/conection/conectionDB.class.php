@@ -5,7 +5,7 @@ Class conectionDB{
 
    private $servidor='localhost';
    private $usuario='root';
-   private $password='TTYSnfqRtwhjJBS2';
+   private $password='TYrF4JyMSNbNzjBA';
    private $base_datos='refcom';
    private $link;
    private $stmt;
